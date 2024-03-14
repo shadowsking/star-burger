@@ -1,14 +1,16 @@
 from django.http import JsonResponse
 from django.templatetags.static import static
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.fields import ListField
+from rest_framework.response import Response
 from rest_framework.serializers import ModelSerializer
 
 from .models import Product, Order
 
 
 class OrderSerializer(ModelSerializer):
-    products = ListField(allow_empty=False)
+    products = ListField(allow_empty=False, write_only=True)
 
     class Meta:
         model = Order
@@ -87,5 +89,4 @@ def register_order(request):
             quantity=product['quantity']
         )
 
-    # TODO это лишь заглушка
-    return JsonResponse({})
+    return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
