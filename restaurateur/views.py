@@ -1,13 +1,10 @@
 from django import forms
-from django.shortcuts import redirect, render
-from django.views import View
-from django.urls import reverse_lazy
-from django.contrib.auth.decorators import user_passes_test
-
 from django.contrib.auth import authenticate, login
 from django.contrib.auth import views as auth_views
-
-
+from django.contrib.auth.decorators import user_passes_test
+from django.shortcuts import redirect, render
+from django.urls import reverse_lazy
+from django.views import View
 from foodcartapp.models import Product, Restaurant, Order
 
 
@@ -92,11 +89,10 @@ def view_restaurants(request):
 
 @user_passes_test(is_manager, login_url='restaurateur:login')
 def view_orders(request):
-    orders = Order.objects.all()
     return render(
         request,
         template_name='order_items.html',
         context={
-            "order_items": orders
+            "order_items": Order.objects.orders()
         }
     )
