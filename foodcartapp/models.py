@@ -142,6 +142,10 @@ class Order(models.Model):
         delivered = ('Доставлен',) * 2
         cancelled = ('Отменен',) * 2
 
+    class Payment(models.TextChoices):
+        cash = ('Наличные',) * 2
+        e_cash = ('Электронные',) * 2
+
     firstname = models.CharField(
         'имя',
         max_length=50
@@ -160,6 +164,13 @@ class Order(models.Model):
         max_length=50,
         choices=Status.choices,
         default=Status.accepted,
+        db_index=True
+    )
+    payment = models.CharField(
+        'способ оплаты',
+        max_length=50,
+        choices=Payment.choices,
+        default=Payment.e_cash,
         db_index=True
     )
     comment = models.TextField(
