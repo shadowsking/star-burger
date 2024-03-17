@@ -93,6 +93,11 @@ def view_orders(request):
         request,
         template_name='order_items.html',
         context={
-            "order_items": Order.objects.orders()
+            "order_items": Order.objects.orders(
+                excluded_statuses=[
+                    Order.Status.delivered,
+                    Order.Status.cancelled
+                ]
+            )
         }
     )

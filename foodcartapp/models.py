@@ -5,9 +5,10 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class OrderQuerySet(models.QuerySet):
-    def orders(self):
+    def orders(self, excluded_statuses=None):
         return (
             self.annotate(amount=Sum(F('products__price') * F("products__quantity")))
+            .exclude(status__in=excluded_statuses or [])
             .order_by("id")
         )
 
@@ -134,6 +135,13 @@ class RestaurantMenuItem(models.Model):
 
 
 class Order(models.Model):
+    class Status(models.TextChoices):
+        accepted = ('Принят',) * 2
+        preparing = ('Готовится',) * 2
+        delivery = ('Доставка',) * 2
+        delivered = ('Доставлен',) * 2
+        cancelled = ('Отменен',) * 2
+
     firstname = models.CharField(
         'имя',
         max_length=50
@@ -146,6 +154,13 @@ class Order(models.Model):
     address = models.CharField(
         max_length=50,
         verbose_name='адрес'
+    )
+    status = models.CharField(
+        'Статус заказа',
+        max_length=50,
+        choices=Status.choices,
+        default=Status.accepted,
+        db_index=True
     )
 
     objects = OrderQuerySet().as_manager()
