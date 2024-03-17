@@ -156,11 +156,15 @@ class Order(models.Model):
         verbose_name='адрес'
     )
     status = models.CharField(
-        'Статус заказа',
+        'статус заказа',
         max_length=50,
         choices=Status.choices,
         default=Status.accepted,
         db_index=True
+    )
+    comment = models.TextField(
+        verbose_name='комментарий',
+        blank=True
     )
 
     objects = OrderQuerySet().as_manager()
