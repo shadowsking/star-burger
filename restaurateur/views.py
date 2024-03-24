@@ -98,6 +98,6 @@ def view_orders(request):
                     Order.Status.delivered,
                     Order.Status.cancelled
                 ]
-            )
+            ).available_restaurants()
         }
     )

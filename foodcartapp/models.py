@@ -12,6 +12,25 @@ class OrderQuerySet(models.QuerySet):
             .order_by('id')
         )
 
+    def available_restaurants(self):
+        menu_items = (
+            RestaurantMenuItem.objects
+            .select_related('product', 'restaurant')
+            .filter(availability=True)
+        )
+        for order in self:
+            products = (
+                menu_items
+                .filter(product__in=order.products.values_list('product'))
+                .values_list("product", "restaurant__name")
+            )
+            group_products = {}
+            for product_id, restaurant in products:
+                group_products.setdefault(product_id, set()).add(restaurant)
+
+            order.restaurants = set.intersection(*group_products.values())
+        return self
+
 
 class Restaurant(models.Model):
     name = models.CharField(
