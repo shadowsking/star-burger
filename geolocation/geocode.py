@@ -19,10 +19,16 @@ def fetch_coordinates(apikey, address):
 
         most_relevant = found_places[0]
         lon, lat = most_relevant['GeoObject']['Point']['pos'].split(" ")
-        return lat, lon
+        return {'lat': lat, 'lon': lon}
     except requests.HTTPError as err:
         print(err)
 
 
 def calculate_distance(from_location, to_location):
-    return round(distance.distance(from_location, to_location).kilometers, 2)
+    return round(
+        distance.distance(
+            from_location.coordinates,
+            to_location.coordinates
+        ).kilometers,
+        2
+    )

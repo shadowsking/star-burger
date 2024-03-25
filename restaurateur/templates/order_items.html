@@ -38,11 +38,13 @@
         <td>
           {% if not item.restaurants %}
             Нет доступных ресторанов
+          {% elif item.status == 'Готовится' %}
+            Готовит {{item.restaurant}}
           {% else %}
             <details>
               <summary>Может быть приготовлен:</summary>
               {% for restaurant in item.restaurants %}
-                <li>{{ restaurant }} - {{ restaurant.distance }} км</li>
+                <li>{{ restaurant }} - {{ restaurant.distance }}км</li>
               {% endfor %}
             </details>
           {% endif %}

@@ -1,10 +1,9 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Sum, F
+from geolocation.geocode import calculate_distance
+from geolocation.models import GeoLocation
 from phonenumber_field.modelfields import PhoneNumberField
-from star_burger import settings
-
-from .geocode import fetch_coordinates, calculate_distance
 
 
 class OrderQuerySet(models.QuerySet):
@@ -32,22 +31,16 @@ class OrderQuerySet(models.QuerySet):
 
             order.restaurants = set.intersection(*group_products.values())
 
-            order_coordinates = fetch_coordinates(
-                apikey=settings.GEO_API_KEY,
-                address=order.address
-            )
-            if not order_coordinates:
+            order_location = GeoLocation.objects.get_or_create_location(order.address)
+            if not order_location:
                 continue
 
             for restaurant in order.restaurants:
-                restaurant_coordinates = fetch_coordinates(
-                    apikey=settings.GEO_API_KEY,
-                    address=restaurant.address
-                )
-                if not restaurant_coordinates:
+                restaurant_location = GeoLocation.objects.get_or_create_location(restaurant.address)
+                if not restaurant_location:
                     continue
 
-                restaurant.distance = calculate_distance(order_coordinates, restaurant_coordinates)
+                restaurant.distance = calculate_distance(order_location, restaurant_location)
 
         return self
 
@@ -217,21 +210,29 @@ class Order(models.Model):
         blank=True
     )
     created_at = models.DateTimeField(
-        'Дата создания',
+        'дата создания',
         auto_now_add=True,
         db_index=True,
     )
     called_at = models.DateTimeField(
-        'Дата звонка',
+        'дата звонка',
         db_index=True,
         blank=True,
         null=True
     )
     delivery_at = models.DateTimeField(
-        'Дата доставки',
+        'дата доставки',
         db_index=True,
         blank=True,
         null=True
+    )
+    restaurant = models.ForeignKey(
+        Restaurant,
+        on_delete=models.SET_NULL,
+        verbose_name='ресторан',
+        related_name='orders',
+        blank=True,
+        null=True,
     )
 
     objects = OrderQuerySet().as_manager()
