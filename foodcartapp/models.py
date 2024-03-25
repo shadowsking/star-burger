@@ -2,6 +2,9 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Sum, F
 from phonenumber_field.modelfields import PhoneNumberField
+from star_burger import settings
+
+from .geocode import fetch_coordinates, calculate_distance
 
 
 class OrderQuerySet(models.QuerySet):
@@ -22,13 +25,30 @@ class OrderQuerySet(models.QuerySet):
             products = (
                 menu_items
                 .filter(product__in=order.products.values_list('product'))
-                .values_list("product", "restaurant__name")
             )
             group_products = {}
-            for product_id, restaurant in products:
-                group_products.setdefault(product_id, set()).add(restaurant)
+            for item in products:
+                group_products.setdefault(item.product, set()).add(item.restaurant)
 
             order.restaurants = set.intersection(*group_products.values())
+
+            order_coordinates = fetch_coordinates(
+                apikey=settings.GEO_API_KEY,
+                address=order.address
+            )
+            if not order_coordinates:
+                continue
+
+            for restaurant in order.restaurants:
+                restaurant_coordinates = fetch_coordinates(
+                    apikey=settings.GEO_API_KEY,
+                    address=restaurant.address
+                )
+                if not restaurant_coordinates:
+                    continue
+
+                restaurant.distance = calculate_distance(order_coordinates, restaurant_coordinates)
+
         return self
 
 
