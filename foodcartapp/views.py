@@ -3,19 +3,10 @@ from django.http import JsonResponse
 from django.templatetags.static import static
 from rest_framework import status
 from rest_framework.decorators import api_view
-from rest_framework.fields import ListField
 from rest_framework.response import Response
-from rest_framework.serializers import ModelSerializer
 
-from .models import Product, Order
-
-
-class OrderSerializer(ModelSerializer):
-    products = ListField(allow_empty=False, write_only=True)
-
-    class Meta:
-        model = Order
-        fields = ['products', 'firstname', 'lastname', 'phonenumber', 'address']
+from .models import Product
+from .serializers import OrderSerializer
 
 
 def banners_list_api(request):
@@ -73,23 +64,7 @@ def product_list_api(request):
 @transaction.atomic
 @api_view(['POST'])
 def register_order(request):
-    data = request.data
     serializer = OrderSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-
-    order = Order.objects.create(
-        firstname=data['firstname'],
-        lastname=data['lastname'],
-        phonenumber=data['phonenumber'],
-        address=data['address']
-    )
-    for product in data['products']:
-        product_instance = Product.objects.get(id=product['product'])
-        order.products.create(
-            product=product_instance,
-            order=order,
-            quantity=product['quantity'],
-            price=product_instance.price
-        )
-
-    return Response(OrderSerializer(order).data, status=status.HTTP_201_CREATED)
+    serializer.create()
+    return Response(serializer.data, status=status.HTTP_201_CREATED)
