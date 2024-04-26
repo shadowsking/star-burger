@@ -29,8 +29,16 @@ class GeoLocation(models.Model):
         verbose_name='адрес',
         unique=True
     )
-    lat = models.FloatField(verbose_name='широта')
-    lon = models.FloatField(verbose_name='долгота')
+    lat = models.FloatField(
+        verbose_name='широта',
+        null=True,
+        blank=True,
+    )
+    lon = models.FloatField(
+        verbose_name='долгота',
+        null=True,
+        blank=True,
+    )
     created_at = models.DateTimeField(
         'дата создания',
         auto_now_add=True,
