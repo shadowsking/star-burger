@@ -13,12 +13,12 @@ class OrderSerializer(ModelSerializer):
 
     def create(self):
         order = Order.objects.create(
-            firstname=self.initial_data['firstname'],
-            lastname=self.initial_data['lastname'],
-            phonenumber=self.initial_data['phonenumber'],
-            address=self.initial_data['address']
+            firstname=self.validated_data['firstname'],
+            lastname=self.validated_data['lastname'],
+            phonenumber=self.validated_data['phonenumber'],
+            address=self.validated_data['address']
         )
-        for product in self.initial_data['products']:
+        for product in self.validated_data['products']:
             product_instance = Product.objects.get(id=product['product'])
             order.products.create(
                 product=product_instance,
