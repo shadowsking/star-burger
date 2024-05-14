@@ -1,30 +1,32 @@
-from rest_framework.fields import ListField
 from rest_framework.serializers import ModelSerializer
 
-from .models import Order, Product
+from .models import Order, OrderedProduct
+
+
+class OrderProductSerializer(ModelSerializer):
+    class Meta:
+        model = OrderedProduct
+        fields = ['product', 'quantity']
+
+    def create(self, **validated_data):
+        return OrderedProduct.objects.create(**validated_data)
 
 
 class OrderSerializer(ModelSerializer):
-    products = ListField(allow_empty=False, write_only=True)
+    products = OrderProductSerializer(many=True, write_only=True)
 
     class Meta:
         model = Order
         fields = ['products', 'firstname', 'lastname', 'phonenumber', 'address']
 
-    def create(self):
-        order = Order.objects.create(
-            firstname=self.validated_data['firstname'],
-            lastname=self.validated_data['lastname'],
-            phonenumber=self.validated_data['phonenumber'],
-            address=self.validated_data['address']
-        )
-        for product in self.validated_data['products']:
-            product_instance = Product.objects.get(id=product['product'])
-            order.products.create(
-                product=product_instance,
+    def create(self, products=None, **validated_data):
+        order = Order.objects.create(**validated_data)
+        for product in products:
+            serializer = OrderProductSerializer(product)
+            serializer.create(
                 order=order,
-                quantity=product['quantity'],
-                price=product_instance.price
+                price=product['product'].price,
+                **product
             )
 
         return order
