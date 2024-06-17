@@ -150,6 +150,7 @@ Parcel будет следить за файлами в каталоге `bundle
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 - `ROLLBAR_ACCESS_TOKEN` - api ключ от [rollbar](https://app.rollbar.com)
 - `ROLLBAR_ENVIRONMENT` - окружение для [rollbar](https://app.rollbar.com), например: `debug` или `production`
+- `DB_URL` - url базы данных
 
 
 ## Цели проекта
