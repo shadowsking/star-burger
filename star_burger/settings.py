@@ -15,8 +15,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env.bool('DEBUG', False)
 GEO_API_KEY = env('GEO_API_KEY')
-ROLLBAR_ACCESS_TOKEN = env('ROLLBAR_ACCESS_TOKEN')
-ROLLBAR_ENVIRONMENT = env('ROLLBAR_ENVIRONMENT')
+ROLLBAR_ACCESS_TOKEN = env('ROLLBAR_ACCESS_TOKEN', None)
+ROLLBAR_ENVIRONMENT = env('ROLLBAR_ENVIRONMENT', 'production')
 DB_URL = os.getenv('DB_URL')
 
 
@@ -132,10 +132,10 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "bundles"),
 ]
 
-
-ROLLBAR = {
-    'access_token': ROLLBAR_ACCESS_TOKEN,
-    'environment': ROLLBAR_ENVIRONMENT,
-    'code_version': '1.0',
-    'root': BASE_DIR,
-}
+if ROLLBAR_ACCESS_TOKEN:
+    ROLLBAR = {
+        'access_token': ROLLBAR_ACCESS_TOKEN,
+        'environment': ROLLBAR_ENVIRONMENT,
+        'code_version': '1.0',
+        'root': BASE_DIR,
+    }
