@@ -3,6 +3,7 @@ cd /opt/star-burger
 git status
 git pull
 
+npm ci --dev
 ./node_modules/.bin/parcel build bundles-src/index.js --dist-dir bundles --public-url="./"
 
 if [ ! -d "venv" ]; then
@@ -15,7 +16,6 @@ pip install -r requirements.txt
 python manage.py collectstatic --noinput
 python manage.py migrate --noinput
 
-sudo systemctl daemon-reload
 sudo systemctl restart star-burger
 sudo systemctl reload nginx
 
