@@ -1,0 +1,45 @@
+services:
+  backend:
+    container_name: star-burger-backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file: .env
+    volumes:
+      - bundles:/opt/app/bundles
+      - static:/opt/app/staticfiles/
+      - media:/opt/app/media/
+    depends_on:
+      - db
+      - frontend
+    ports:
+      - "8000:8000"
+
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    volumes:
+      - bundles:/opt/app/bundles
+
+  db:
+    image: postgres:16.1-alpine
+    volumes:
+      - postgres:/var/lib/postgresql/data/
+    restart: unless-stopped
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+
+    env_file: .env
+
+volumes:
+  postgres:
+  bundles:
+  static:
+  media:
