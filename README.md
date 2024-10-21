@@ -134,13 +134,7 @@ Parcel будет следить за файлами в каталоге `bundle
 **Сбросьте кэш браузера <kbd>Ctrl-F5</kbd>.** Браузер при любой возможности старается кэшировать файлы статики: CSS, картинки и js-код. Порой это приводит к странному поведению сайта, когда код уже давно изменился, но браузер этого не замечает и продолжает использовать старую закэшированную версию. В норме Parcel решает эту проблему самостоятельно. Он следит за пересборкой фронтенда и предупреждает JS-код в браузере о необходимости подтянуть свежий код. Но если вдруг что-то у вас идёт не так, то начните ремонт со сброса браузерного кэша, жмите <kbd>Ctrl-F5</kbd>.
 
 
-## Как запустить prod-версию сайта
-
-Собрать фронтенд:
-
-```sh
-./node_modules/.bin/parcel build bundles-src/index.js --dist-dir bundles --public-url="./"
-```
+## Как настроить:
 
 Настроить бэкенд: создать файл `.env` в каталоге `star_burger/` со следующими настройками:
 
@@ -150,7 +144,26 @@ Parcel будет следить за файлами в каталоге `bundle
 - `ALLOWED_HOSTS` — [см. документацию Django](https://docs.djangoproject.com/en/3.1/ref/settings/#allowed-hosts)
 - `ROLLBAR_ACCESS_TOKEN` - api ключ от [rollbar](https://app.rollbar.com)
 - `ROLLBAR_ENVIRONMENT` - окружение для [rollbar](https://app.rollbar.com), например: `debug` или `production`
-- `DB_URL` - url базы данных
+- `DB_DATABASE` - наименование бд
+- `DB_USER` - имя пользователя бд
+- `DB_PASSWORD` - пароль пользователя бд
+- `DB_URL` - url базы данных: postgresql://DB_USER:DB_PASSWORD@db:5432/DB_DATABASE
+
+Установите [docker compose](https://docs.docker.com/compose/install/)
+
+## Как запустить prod-версию сайта
+```bash
+docker-compose up -d
+```
+и для запуска или обновления
+```bash
+source deploy_star_burger.sh
+```
+
+## Как запустить dev-версию сайта
+```bash
+docker-compose -f docker-compose-dev.yml up -d --build
+```
 
 
 ## Цели проекта
