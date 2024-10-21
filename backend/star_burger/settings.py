@@ -20,7 +20,7 @@ ROLLBAR_ENVIRONMENT = env('ROLLBAR_ENVIRONMENT', 'production')
 DB_URL = os.getenv('DB_URL')
 
 
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', ['127.0.0.1', 'localhost', 'backend'])
 
 INSTALLED_APPS = [
     'foodcartapp.apps.FoodcartappConfig',

@@ -3,7 +3,7 @@ services:
     container_name: star-burger-backend
     build:
       context: .
-      dockerfile: backend/Dockerfile-dev
+      dockerfile: backend/Dockerfile
     env_file: .env
     volumes:
       - bundles:/opt/app/bundles
@@ -38,6 +38,20 @@ services:
 
     env_file: .env
 
+  nginx:
+    container_name: star-burger-nginx
+    image: nginx:1.25.1-alpine-slim
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - static:/opt/app/staticfiles/
+      - media:/opt/app/media/
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/nginx.conf
+
+    restart: unless-stopped
 
 volumes:
   postgres:
