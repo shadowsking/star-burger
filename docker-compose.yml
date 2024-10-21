@@ -7,8 +7,8 @@ services:
     env_file: .env
     volumes:
       - bundles:/opt/app/bundles
-      - static:/opt/app/staticfiles/
-      - media:/opt/app/media/
+      - /var/www/star-burger/frontend:/opt/app/staticfiles/
+      - /var/www/star-burger/media:/opt/app/media/
     depends_on:
       - db
       - frontend
@@ -41,5 +41,3 @@ services:
 volumes:
   postgres:
   bundles:
-  static:
-  media:
