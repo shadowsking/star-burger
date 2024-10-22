@@ -149,7 +149,7 @@ Parcel будет следить за файлами в каталоге `bundle
 - `DB_PASSWORD` - пароль пользователя бд
 - `DB_URL` - url базы данных: postgresql://DB_USER:DB_PASSWORD@db:5432/DB_DATABASE
 
-Установите [docker compose](https://docs.docker.com/compose/install/)
+Установите [docker](https://docs.docker.com/engine/install/)
 
 ## Как запустить prod-версию сайта
 ```bash
